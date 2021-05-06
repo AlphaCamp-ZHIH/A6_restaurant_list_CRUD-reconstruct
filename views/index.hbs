@@ -15,12 +15,16 @@
       <div class="col-4 dropdown d-flex justify-content-end">
         <button class="btn btn-secondary dropdown-toggle " type="button" id="dropdownMenu2" data-toggle="dropdown"
           aria-haspopup="true" aria-expanded="false">
+          {{#if sort}}
+          {{sort}}
+          {{else}}
           餐廳篩選
+          {{/if}}
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
           <a href="/sort/A-Z" class="dropdown-item" type="button">A-Z</a>
           <a href="/sort/Z-A" class="dropdown-item" type="button">Z-A</a>
-          <a href="/sort/category"class="dropdown-item" type="button">類別</a>
+          <a href="/sort/category" class="dropdown-item" type="button">類別</a>
           <a href="/sort/location" class="dropdown-item" type="button">地區</a>
         </div>
       </div>
