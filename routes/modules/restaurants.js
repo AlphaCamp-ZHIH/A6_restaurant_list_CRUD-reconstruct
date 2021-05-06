@@ -7,9 +7,9 @@ router.get('/add', (req, res) => {
   res.render('add')
 });
 router.post('/', (req, res) => {
-  return Restaurants.create({ ...req.body })
+  return Restaurants.create(req.body)
     .then(() => {
-      console.log('cretae successfully');
+      console.log('create successfully');
       res.redirect('/')
     })
     .catch(error => console.log('create error'))
@@ -33,7 +33,7 @@ router.get('/:id/edit', (req, res) => {
     .then(restaurant => {
       res.render('edit', { restaurant })
     })
-    .catch(error => console.log('edir error'));
+    .catch(error => console.log('edit error'));
 });
 router.put('/:id', (req, res) => {
   const data = Object.keys(req.body);
