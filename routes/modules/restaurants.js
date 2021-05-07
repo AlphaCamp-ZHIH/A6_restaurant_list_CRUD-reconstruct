@@ -1,63 +1,192 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Restaurants = require('../../models/restaurants');
+const Restaurants = require("../../models/restaurants");
+// search 餐廳
+router.get("/search", (req, res) => {
+  const keyword = req.query.keyword;
+  return Restaurants.find()
+    .lean()
+    .then((restaurants) => {
+      const filterList = restaurants.filter(
+        (restaurant) =>
+          restaurant.name.includes(keyword) ||
+          restaurant.name_en.toLowerCase().includes(keyword.toLowerCase()) ||
+          restaurant.category.toLowerCase().includes(keyword.toLowerCase())
+      );
+      res.render("index", {
+        pageTitle: "index",
+        isIndex: true,
+        restaurants: filterList,
+      });
+    })
+    .catch(() => console.log("search error"));
+});
+// sort by A-Z
+router.get("/sort", (req, res) => {
+  const type = req.query.type;
+  if (type === "A-Z") {
+    Restaurants.find()
+      .sort({ name_en: "asc" })
+      .lean()
+      .then((restaurants) =>
+        res.render("index", {
+          pageTitle: "index",
+          isIndex: true,
+          restaurants,
+          sort: "A-Z",
+        })
+      );
+  }
+  if (type === "Z-A") {
+    Restaurants.find()
+      .sort({ name_en: "desc" })
+      .lean()
+      .then((restaurants) =>
+        res.render("index", {
+          pageTitle: "index",
+          isIndex: true,
+          restaurants,
+          sort: "Z-A",
+        })
+      );
+  }
+  if (type === "category") {
+    Restaurants.find()
+      .sort({ category: "asc" })
+      .lean()
+      .then((restaurants) =>
+        res.render("index", {
+          pageTitle: "index",
+          isIndex: true,
+          restaurants,
+          sort: "類別",
+        })
+      );
+  }
+  if (type === "location") {
+    Restaurants.find()
+      .sort({ category: "asc" })
+      .lean()
+      .then((restaurants) =>
+        res.render("index", {
+          pageTitle: "index",
+          isIndex: true,
+          restaurants,
+          sort: "地區",
+        })
+      );
+  }
+});
 
 //create 餐廳
-router.get('/add', (req, res) => {
-  res.render('add')
+router.get("/add", (req, res) => {
+  res.render("add");
 });
-router.post('/', (req, res) => {
+router.post("/", (req, res) => {
+  const {
+    name,
+    name_en,
+    category,
+    image,
+    location,
+    phone,
+    google_map,
+    rating,
+    description,
+  } = req.body;
+  const restaurant = req.body
+
+  if (
+    !name ||
+    !name_en ||
+    !category ||
+    !image ||
+    !location ||
+    !phone ||
+    !google_map ||
+    !rating ||
+    !description
+  ) {
+    return res.render("add", { restaurant,errorMessage: "每個欄位皆為必填" });
+  }
   return Restaurants.create(req.body)
     .then(() => {
-      console.log('create successfully');
-      res.redirect('/')
+      console.log("create successfully");
+      res.redirect("/");
     })
-    .catch(error => console.log('create error'))
+    .catch((error) => console.log("create error"));
 });
 // 餐廳detail
 router.get("/:id", (req, res) => {
   const id = req.params.id;
   return Restaurants.findById(id)
     .lean()
-    .then(restaurant =>
-      res.render("show", { pageTitle: restaurant.name, restaurant: restaurant, useUnifiedTopology: true })
+    .then((restaurant) =>
+      res.render("show", {
+        pageTitle: restaurant.name,
+        restaurant: restaurant,
+      })
     )
-    .catch(error => console.log('detail error'))
+    .catch((error) => console.log("detail error"));
 });
 
 //編集餐廳
-router.get('/:id/edit', (req, res) => {
+router.get("/:id/edit", (req, res) => {
   const id = req.params.id;
+
   return Restaurants.findById(id)
     .lean()
-    .then(restaurant => {
-      res.render('edit', { restaurant })
+    .then((restaurant) => {
+      res.render("edit", { restaurant });
     })
-    .catch(error => console.log('edit error'));
+    .catch((error) => console.log("edit error"));
 });
-router.put('/:id', (req, res) => {
+router.put("/:id", (req, res) => {
   const data = Object.keys(req.body);
   const id = req.params.id;
+  const {
+    name,
+    name_en,
+    category,
+    image,
+    location,
+    phone,
+    google_map,
+    rating,
+    description,
+  } = req.body;
   return Restaurants.findById(id)
-    .then(restaurant => {
-      data.forEach(key => {
+    .then((restaurant) => {
+      if (
+        !name ||
+        !name_en ||
+        !category ||
+        !image ||
+        !location ||
+        !phone ||
+        !google_map ||
+        !rating ||
+        !description
+      ) {
+        return res.render("edit", { errorMessage: "每個欄位皆為必填" });
+      }
+      data.forEach((key) => {
         restaurant[key] = req.body[key];
-      })
+      });
       return restaurant.save();
     })
-    .then(() => res.redirect('/'))
-    .catch(error => console.log('put error'))
+    .then(() => res.redirect("/"))
+    .catch((error) => console.log("put error"));
 });
 // 刪除餐廳
-router.delete('/:id', (req, res) => {
+router.delete("/:id", (req, res) => {
   const id = req.params.id;
   return Restaurants.findById(id)
-    .then(restaurant => {
-
-      return restaurant.remove()
+    .then((restaurant) => {
+      return restaurant.remove();
     })
-    .then(() => res.redirect('/'))
-    .catch(error => console.log('delete error'))
-})
+    .then(() => res.redirect("/"))
+    .catch((error) => console.log("delete error"));
+});
 
 module.exports = router;
