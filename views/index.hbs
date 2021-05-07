@@ -13,7 +13,7 @@
         </div>
       </form>
       <div class="col-4 dropdown d-flex justify-content-end">
-        <button class="btn btn-secondary dropdown-toggle " type="button" id="dropdownMenu2" data-toggle="dropdown"
+        <button class="btn btn-danger dropdown-toggle " type="button" id="dropdownMenu2" data-toggle="dropdown"
           aria-haspopup="true" aria-expanded="false">
           {{#if sort}}
           {{sort}}
@@ -60,10 +60,10 @@
           </div>
         </a>
         <div class="w-100 row align-items-center justify-content-end no-gutters mb-3">
-          <a href="/restaurants/{{this._id}}/edit" class="col-3">edit</a>
-          <a href="/restaurants/{{this._id}}" class="col-3">detail</a>
+          <a href="/restaurants/{{this._id}}/edit" class="col-3 text-danger">edit</a>
+          <a href="/restaurants/{{this._id}}" class="col-3 text-danger ">detail</a>
           <form action="/restaurants/{{this._id}}?_method=DELETE" method="POST" class="col-3 p-0">
-            <button class="btn btn-primary ">delete</button>
+            <button class="w-100 btn btn-warning ">delete</button>
           </form>
 
         </div>
