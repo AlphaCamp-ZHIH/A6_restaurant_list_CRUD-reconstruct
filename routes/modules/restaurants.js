@@ -23,59 +23,25 @@ router.get("/search", (req, res) => {
 });
 // sort by A-Z
 router.get("/sort", (req, res) => {
-  const type = req.query.type;
-  if (type === "A-Z") {
+  const keyword = req.query.type;
+  const sortType = {
+    "A-Z": ["name_en", "asc","A-Z"],
+    "Z-A": ["name_en", "desc","Z-A"],
+    category: ["category", "asc","類別"],
+    location: ["location", "asc","地區"],
+  };
+  const [type, method,displayName] = sortType[keyword];
     Restaurants.find()
-      .sort({ name_en: "asc" })
+      .sort({ [type]: method })
       .lean()
       .then((restaurants) =>
         res.render("index", {
           pageTitle: "index",
           isIndex: true,
           restaurants,
-          sort: "A-Z",
+          sort: displayName,
         })
       );
-  }
-  if (type === "Z-A") {
-    Restaurants.find()
-      .sort({ name_en: "desc" })
-      .lean()
-      .then((restaurants) =>
-        res.render("index", {
-          pageTitle: "index",
-          isIndex: true,
-          restaurants,
-          sort: "Z-A",
-        })
-      );
-  }
-  if (type === "category") {
-    Restaurants.find()
-      .sort({ category: "asc" })
-      .lean()
-      .then((restaurants) =>
-        res.render("index", {
-          pageTitle: "index",
-          isIndex: true,
-          restaurants,
-          sort: "類別",
-        })
-      );
-  }
-  if (type === "location") {
-    Restaurants.find()
-      .sort({ category: "asc" })
-      .lean()
-      .then((restaurants) =>
-        res.render("index", {
-          pageTitle: "index",
-          isIndex: true,
-          restaurants,
-          sort: "地區",
-        })
-      );
-  }
 });
 
 //create 餐廳
